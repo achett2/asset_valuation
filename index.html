@@ -91,6 +91,7 @@
         <button id="add-year" class="primary" type="button">+ Add year</button>
       </div>
     </div>
+    <p class="footnote">2027 Net Sales prefilled from the 340B model’s Base case: $2,780M annualized (Low: $2,460M; Best: $3,090M). This is the modeled ATTR-CM demand series, not total global Amvuttra sales.</p>
 
     <div class="table-wrap" role="region" aria-label="Annual cash flow input table" tabindex="0">
       <table id="cash-flow-table">
@@ -100,7 +101,7 @@
     </div>
 
     <p class="formula"><strong>Cash Flow = Net Sales − R&amp;D − SG&amp;A − COGS − Royalties &amp; Milestones − Cash Taxes − Capital Spending − Change in Working Capital</strong></p>
-    <p class="footnote">Enter expense rows as positive amounts. Enter a negative change in working capital when it releases cash. NPV discounts Cash Flow by (1 + discount rate)<sup>year</sup>; Risk-Adjusted NPV also multiplies each year’s present value by that year’s cumulative PoS. Use 100% for Year 0; cumulative PoS should stay flat or decrease in later years. This simplified method assumes each year’s full net cash flow depends on reaching that year.</p>
+    <p class="footnote">Enter expense rows as positive amounts. Enter a negative change in working capital when it releases cash. Sales alone are not cash flow, so fill in the cost rows before relying on NPV. NPV discounts Cash Flow by (1 + discount rate)<sup>year</sup>; Risk-Adjusted NPV also multiplies each year’s present value by that year’s cumulative PoS. Use 100% for Year 0; cumulative PoS should stay flat or decrease in later years. This simplified method assumes each year’s full net cash flow depends on reaching that year.</p>
   </main>
 
   <script>
@@ -117,6 +118,7 @@
       ];
       let forecastYears = 5;
       const values = Object.fromEntries(rowLabels.map(row => [row.key, Array(forecastYears + 1).fill(0)]));
+      values.sales[1] = 2780;
       const posValues = Array(forecastYears + 1).fill(100);
       const head = document.getElementById("year-head");
       const body = document.getElementById("table-body");
