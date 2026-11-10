@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Asset NPV Calculator</title>
+  <style>
+    :root { color-scheme: light; --ink:#172b3a; --muted:#607384; --line:#dce5eb; --soft:#f4f8fa; --accent:#087f8c; --accent-dark:#06636e; --positive:#087443; --negative:#b42318; }
+    * { box-sizing: border-box; }
+    body { margin:0; padding:24px; background:#fff; color:var(--ink); font:14px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .app { max-width:1180px; margin:0 auto; }
+    header { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; margin-bottom:18px; }
+    h1 { margin:0 0 5px; font-size:23px; letter-spacing:-.025em; }
+    .subtitle { margin:0; color:var(--muted); }
+    .card { border:1px solid var(--line); border-radius:14px; background:#fff; box-shadow:0 5px 18px rgba(21,55,72,.06); }
+    .summary { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:16px 19px; margin:18px 0 14px; background:linear-gradient(110deg,#f1fbfa,#f7fafc); }
+    .summary-label { color:var(--muted); font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+    .summary-value { margin-top:2px; color:var(--accent-dark); font-size:30px; font-weight:750; font-variant-numeric:tabular-nums; letter-spacing:-.04em; }
+    .rate-control { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    label { color:var(--muted); font-weight:650; }
+    .rate-input { width:100px; }
+    input { font:inherit; color:var(--ink); }
+    input[type=number] { width:100%; min-width:76px; border:1px solid var(--line); border-radius:7px; padding:7px 8px; text-align:right; font-variant-numeric:tabular-nums; background:#fff; }
+    input[type=number]:focus { outline:2px solid rgba(8,127,140,.22); border-color:var(--accent); }
+    input::placeholder { color:#a2b0ba; }
+    .controls { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:13px 0 9px; }
+    .units { color:var(--muted); font-size:12px; }
+    .buttons { display:flex; gap:8px; }
+    button { border:1px solid var(--line); border-radius:8px; padding:8px 12px; background:white; color:var(--ink); font:inherit; font-weight:650; cursor:pointer; }
+    button:hover { border-color:#9bb8c0; background:var(--soft); }
+    button.primary { border-color:var(--accent); background:var(--accent); color:#fff; }
+    button.primary:hover { background:var(--accent-dark); }
+    button:disabled { cursor:not-allowed; opacity:.45; }
+    .table-wrap { overflow-x:auto; border:1px solid var(--line); border-radius:12px; }
+    table { width:100%; border-collapse:separate; border-spacing:0; min-width:760px; }
+    th, td { padding:9px 11px; border-bottom:1px solid var(--line); }
+    thead th { position:sticky; top:0; z-index:1; background:#f4f8fa; color:#536978; font-size:12px; text-align:right; white-space:nowrap; }
+    thead th:first-child { text-align:left; min-width:218px; }
+    tbody th { width:218px; background:#fff; text-align:left; font-weight:650; white-space:nowrap; }
+    tbody td { min-width:110px; text-align:right; }
+    tbody tr:last-child th, tbody tr:last-child td { border-bottom:0; }
+    .cashflow th, .cashflow td { background:#edf8f7; border-top:2px solid #a8d6d4; font-weight:750; }
+    .cashflow .result { font-variant-numeric:tabular-nums; }
+    .cashflow .negative { color:var(--negative); }
+    .cashflow .positive { color:var(--positive); }
+    .formula { margin:13px 1px 0; padding:11px 13px; border-left:3px solid var(--accent); border-radius:4px 8px 8px 4px; background:var(--soft); color:#435967; font-size:12px; }
+    .formula strong { color:var(--ink); }
+    .footnote { margin:8px 1px 0; color:var(--muted); font-size:12px; }
+    @media (max-width:650px) {
+      body { padding:16px 12px; }
+      header { display:block; }
+      .summary { align-items:flex-start; flex-direction:column; gap:10px; }
+      .controls { align-items:flex-start; flex-direction:column; }
+      .buttons { width:100%; }
+      button { flex:1; }
+      h1 { font-size:20px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div>
+        <h1>Asset NPV Calculator</h1>
+        <p class="subtitle">Enter annual amounts in $ millions. Cash Flow is calculated from the rows below.</p>
+      </div>
+    </header>
+
+    <section class="summary card" aria-live="polite">
+      <div>
+        <div class="summary-label">Net Present Value</div>
+        <div class="summary-value" id="npv">$0.00M</div>
+      </div>
+      <div class="rate-control">
+        <label for="discount-rate">Annual discount rate</label>
+        <input class="rate-input" id="discount-rate" type="number" min="0" max="100" step="0.1" value="10" aria-label="Annual discount rate in percent">
+        <span class="units">%</span>
+      </div>
+    </section>
+
+    <div class="controls">
+      <div class="units">Year 0 is the valuation date; Year 1 is one year from today. Values are in $M.</div>
+      <div class="buttons">
+        <button id="remove-year" type="button" aria-label="Remove last forecast year">− Remove year</button>
+        <button id="add-year" class="primary" type="button">+ Add year</button>
+      </div>
+    </div>
+
+    <div class="table-wrap" role="region" aria-label="Annual cash flow input table" tabindex="0">
+      <table id="cash-flow-table">
+        <thead><tr id="year-head"><th scope="col">Cash flow components ($M)</th></tr></thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+
+    <p class="formula"><strong>Cash Flow = Net Sales − R&amp;D − SG&amp;A − COGS − Royalties &amp; Milestones − Cash Taxes − Capital Spending − Change in Working Capital</strong></p>
+    <p class="footnote">Enter expense rows as positive amounts. Enter a negative change in working capital when it releases cash. NPV = the sum of each year’s Cash Flow discounted by (1 + discount rate)<sup>year</sup>.</p>
+  </main>
+
+  <script>
+    (() => {
+      const rowLabels = [
+        { key: "sales", label: "Net Sales" },
+        { key: "rd", label: "R&D" },
+        { key: "sga", label: "SG&A" },
+        { key: "cogs", label: "COGS" },
+        { key: "royalties", label: "Royalties & Milestones" },
+        { key: "taxes", label: "Cash Taxes" },
+        { key: "capex", label: "Capital Spending" },
+        { key: "workingCapital", label: "Change in Working Capital" }
+      ];
+      let forecastYears = 5;
+      const values = Object.fromEntries(rowLabels.map(row => [row.key, Array(forecastYears + 1).fill(0)]));
+      const head = document.getElementById("year-head");
+      const body = document.getElementById("table-body");
+      const rateInput = document.getElementById("discount-rate");
+      const npvOutput = document.getElementById("npv");
+      const addButton = document.getElementById("add-year");
+      const removeButton = document.getElementById("remove-year");
+
+      function formatMoney(value) {
+        return "$" + new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value) + "M";
+      }
+      function cashFlowAt(year) {
+        const v = key => Number(values[key][year]) || 0;
+        return v("sales") - v("rd") - v("sga") - v("cogs") - v("royalties") - v("taxes") - v("capex") - v("workingCapital");
+      }
+      function calculate() {
+        const rate = (Number(rateInput.value) || 0) / 100;
+        let npv = 0;
+        for (let year = 0; year <= forecastYears; year++) npv += cashFlowAt(year) / Math.pow(1 + rate, year);
+        npvOutput.textContent = formatMoney(npv);
+        npvOutput.style.color = npv < 0 ? "var(--negative)" : "var(--accent-dark)";
+        for (let year = 0; year <= forecastYears; year++) {
+          const cell = document.getElementById("cash-flow-" + year);
+          const flow = cashFlowAt(year);
+          cell.textContent = formatMoney(flow);
+          cell.className = "result " + (flow < 0 ? "negative" : flow > 0 ? "positive" : "");
+          cell.setAttribute("aria-label", "Year " + year + " cash flow " + flow.toFixed(2) + " million dollars");
+        }
+        removeButton.disabled = forecastYears <= 1;
+        addButton.disabled = forecastYears >= 15;
+      }
+      function render() {
+        head.innerHTML = '<th scope="col">Cash flow components ($M)</th>';
+        for (let year = 0; year <= forecastYears; year++) {
+          const th = document.createElement("th");
+          th.scope = "col";
+          th.textContent = "Year " + year;
+          head.appendChild(th);
+        }
+        body.innerHTML = "";
+        for (const row of rowLabels) {
+          const tr = document.createElement("tr");
+          const th = document.createElement("th");
+          th.scope = "row";
+          th.textContent = row.label;
+          tr.appendChild(th);
+          for (let year = 0; year <= forecastYears; year++) {
+            const td = document.createElement("td");
+            const input = document.createElement("input");
+            input.type = "number";
+            input.step = "0.01";
+            input.inputMode = "decimal";
+            input.value = values[row.key][year] === 0 ? "" : values[row.key][year];
+            input.placeholder = "0.00";
+            input.setAttribute("aria-label", row.label + ", Year " + year + ", millions of dollars");
+            input.addEventListener("input", () => {
+              values[row.key][year] = Number(input.value) || 0;
+              calculate();
+            });
+            td.appendChild(input);
+            tr.appendChild(td);
+          }
+          body.appendChild(tr);
+        }
+        const cashFlowRow = document.createElement("tr");
+        cashFlowRow.className = "cashflow";
+        const cashFlowLabel = document.createElement("th");
+        cashFlowLabel.scope = "row";
+        cashFlowLabel.textContent = "Cash Flow";
+        cashFlowRow.appendChild(cashFlowLabel);
+        for (let year = 0; year <= forecastYears; year++) {
+          const td = document.createElement("td");
+          td.id = "cash-flow-" + year;
+          td.className = "result";
+          td.textContent = "$0.00M";
+          cashFlowRow.appendChild(td);
+        }
+        body.appendChild(cashFlowRow);
+        calculate();
+      }
+      addButton.addEventListener("click", () => {
+        if (forecastYears >= 15) return;
+        forecastYears++;
+        for (const row of rowLabels) values[row.key].push(0);
+        render();
+      });
+      removeButton.addEventListener("click", () => {
+        if (forecastYears <= 1) return;
+        forecastYears--;
+        for (const row of rowLabels) values[row.key].length = forecastYears + 1;
+        render();
+      });
+      rateInput.addEventListener("input", calculate);
+      render();
+    })();
+  </script>
+</body>
+</html>
