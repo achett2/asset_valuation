@@ -85,13 +85,13 @@
     </section>
 
     <div class="controls">
-      <div class="units">Year 0 is the valuation date; Year 1 is one year from today. Values are in $M.</div>
+      <div class="units">2026 is the valuation date; 2027 is the first forecast year. Values are in $M.</div>
       <div class="buttons">
         <button id="remove-year" type="button" aria-label="Remove last forecast year">− Remove year</button>
         <button id="add-year" class="primary" type="button">+ Add year</button>
       </div>
     </div>
-    <p class="footnote">2027 Net Sales prefilled from the 340B model’s Base case: $2,780M annualized (Low: $2,460M; Best: $3,090M). This is the modeled ATTR-CM demand series, not total global Amvuttra sales.</p>
+    <p class="footnote">2027–2031 Net Sales use a flat $2,780M per year, carrying forward the 340B model’s Base case annualized run-rate (Low: $2,460M; Best: $3,090M). This is the modeled ATTR-CM demand series, not total global Amvuttra sales.</p>
 
     <div class="table-wrap" role="region" aria-label="Annual cash flow input table" tabindex="0">
       <table id="cash-flow-table">
@@ -101,7 +101,7 @@
     </div>
 
     <p class="formula"><strong>Cash Flow = Net Sales − R&amp;D − SG&amp;A − COGS − Royalties &amp; Milestones − Cash Taxes − Capital Spending − Change in Working Capital</strong></p>
-    <p class="footnote">Enter expense rows as positive amounts. Enter a negative change in working capital when it releases cash. Sales alone are not cash flow, so fill in the cost rows before relying on NPV. NPV discounts Cash Flow by (1 + discount rate)<sup>year</sup>; Risk-Adjusted NPV also multiplies each year’s present value by that year’s cumulative PoS. Use 100% for Year 0; cumulative PoS should stay flat or decrease in later years. This simplified method assumes each year’s full net cash flow depends on reaching that year.</p>
+    <p class="footnote">Enter expense rows as positive amounts. Enter a negative change in working capital when it releases cash. Sales alone are not cash flow, so fill in the cost rows before relying on NPV. NPV discounts Cash Flow by (1 + discount rate)<sup>year</sup>; Risk-Adjusted NPV also multiplies each year’s present value by that year’s cumulative PoS. Use 100% for 2026; cumulative PoS should stay flat or decrease in later years. This simplified method assumes each year’s full net cash flow depends on reaching that year.</p>
   </main>
 
   <script>
@@ -118,7 +118,7 @@
       ];
       let forecastYears = 5;
       const values = Object.fromEntries(rowLabels.map(row => [row.key, Array(forecastYears + 1).fill(0)]));
-      values.sales[1] = 2780;
+      for (let year = 1; year <= forecastYears; year++) values.sales[year] = 2780;
       const posValues = Array(forecastYears + 1).fill(100);
       const head = document.getElementById("year-head");
       const body = document.getElementById("table-body");
@@ -153,7 +153,7 @@
           const flow = cashFlowAt(year);
           cell.textContent = formatMoney(flow);
           cell.className = "result " + (flow < 0 ? "negative" : flow > 0 ? "positive" : "");
-          cell.setAttribute("aria-label", "Year " + year + " cash flow " + flow.toFixed(2) + " million dollars");
+          cell.setAttribute("aria-label", (2026 + year) + " cash flow " + flow.toFixed(2) + " million dollars");
         }
         removeButton.disabled = forecastYears <= 1;
         addButton.disabled = forecastYears >= 15;
@@ -163,7 +163,7 @@
         for (let year = 0; year <= forecastYears; year++) {
           const th = document.createElement("th");
           th.scope = "col";
-          th.textContent = "Year " + year;
+          th.textContent = String(2026 + year);
           head.appendChild(th);
         }
         body.innerHTML = "";
@@ -181,7 +181,7 @@
             input.inputMode = "decimal";
             input.value = values[row.key][year] === 0 ? "" : values[row.key][year];
             input.placeholder = "0.00";
-            input.setAttribute("aria-label", row.label + ", Year " + year + ", millions of dollars");
+            input.setAttribute("aria-label", row.label + ", " + (2026 + year) + ", millions of dollars");
             input.addEventListener("input", () => {
               values[row.key][year] = Number(input.value) || 0;
               calculate();
@@ -205,7 +205,7 @@
           input.step = "0.1";
           input.inputMode = "decimal";
           input.value = posValues[year];
-          input.setAttribute("aria-label", "Cumulative probability of success, Year " + year + ", percent");
+          input.setAttribute("aria-label", "Cumulative probability of success, " + (2026 + year) + ", percent");
           input.addEventListener("input", () => {
             posValues[year] = Math.max(0, Math.min(100, Number(input.value) || 0));
             calculate();
@@ -233,7 +233,7 @@
       addButton.addEventListener("click", () => {
         if (forecastYears >= 15) return;
         forecastYears++;
-        for (const row of rowLabels) values[row.key].push(0);
+        for (const row of rowLabels) values[row.key].push(row.key === "sales" ? 2780 : 0);
         posValues.push(100);
         render();
       });
