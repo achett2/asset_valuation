@@ -20,9 +20,14 @@
     .rate-control { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
     label { color:var(--muted); font-weight:650; }
     .rate-input { width:100px; }
-    .assumption-controls { display:flex; flex-wrap:wrap; gap:12px 22px; align-items:center; margin:0 0 14px; padding:12px 15px; }
-    .assumption-controls label { display:flex; align-items:center; gap:8px; }
-    .assumption-controls input { width:84px !important; }
+    .assumptions { margin-top:16px; padding:16px; }
+    .assumptions h2 { margin:0 0 4px; font-size:18px; }
+    .assumption-intro { margin:0 0 12px; color:var(--muted); }
+    .assumption-controls { display:flex; flex-wrap:wrap; gap:12px 20px; align-items:center; margin:0 0 13px; padding:12px; border:1px solid var(--line); border-radius:10px; background:#f8fafb; }
+    .assumption-controls label { display:flex; align-items:center; gap:7px; font-size:12px; }
+    .assumption-controls input { width:78px !important; min-width:65px !important; padding:6px !important; }
+    .assumptions-table { margin-top:8px; }
+    .assumptions-table table { min-width:760px; }
     .derived-input { background:#f4f8fa !important; color:#435967 !important; }
     input { font:inherit; color:var(--ink); }
     input[type=number] { width:100%; min-width:76px; border:1px solid var(--line); border-radius:7px; padding:7px 8px; text-align:right; font-variant-numeric:tabular-nums; background:#fff; }
@@ -88,11 +93,6 @@
       </div>
     </section>
 
-    <div class="assumption-controls card" aria-label="Cash flow assumptions">
-      <label for="tax-rate">Cash tax rate<input id="tax-rate" type="number" min="0" max="100" step="0.1" value="21" aria-label="Cash tax rate in percent">%</label>
-      <label for="capex-rate">Capital spending<input id="capex-rate" type="number" min="0" max="100" step="0.1" value="1" aria-label="Capital spending as percent of sales">%</label>
-      <label for="working-capital-rate">Working capital<input id="working-capital-rate" type="number" min="0" max="100" step="0.1" value="5" aria-label="Working capital investment as percent of sales change">%</label>
-    </div>
     <div class="controls">
       <div class="units">2026 is the valuation date; 2027 is the first forecast year. Values are in $M.</div>
       <div class="buttons">
@@ -100,7 +100,7 @@
         <button id="add-year" class="primary" type="button">+ Add year</button>
       </div>
     </div>
-    <p class="footnote">Sales scope: global AMVUTTRA product valuation, split into U.S. and ex-U.S. rows using the reported nine-month 2026 TTR franchise geographic mix (about 79.8% U.S. / 20.2% ex-U.S.). The 2026 global AMVUTTRA estimate is $4,120M: the low end of Alnylam’s $4,200M–$4,500M TTR guidance less an estimated $80M of ONPATTRO sales. 2027–2035 are an illustrative annual forecast, not company guidance: sales grow to a $5,500M 2030 peak and then gradually decline to reflect competition, access and pricing pressure, including potential next-generation TTR competition. This is not a 340B-only forecast.</p>
+    <p class="footnote">Edit the model inputs in the assumptions section below the cash flow table. Net sales, cost estimates, royalties, taxes, capex, and working capital will update automatically.</p>
 
     <div class="table-wrap" role="region" aria-label="Annual cash flow input table" tabindex="0">
       <table id="cash-flow-table">
@@ -110,6 +110,26 @@
     </div>
 
     <p class="formula"><strong>Cash Flow = Net Sales − R&amp;D − SG&amp;A − COGS − Royalties &amp; Milestones − Cash Taxes − Capital Spending − Change in Working Capital</strong></p>
+    <section class="assumptions card" aria-labelledby="assumptions-title">
+      <h2 id="assumptions-title">Editable assumptions</h2>
+      <p class="assumption-intro">Change the inputs here to update the forecast and cash flow table above. Values are in $ millions unless marked as a percentage.</p>
+      <div class="assumption-controls">
+        <label for="xus-share">U.S. share of sales<input id="xus-share" type="number" min="0" max="100" step="0.1" value="79.8">%</label>
+        <label for="cogs-rate">COGS / sales<input id="cogs-rate" type="number" min="0" max="100" step="0.1" value="28">%</label>
+        <label for="sga-rate">SG&amp;A / sales<input id="sga-rate" type="number" min="0" max="100" step="0.1" value="22.9">%</label>
+        <label for="royalty-rate">Blackstone royalty<input id="royalty-rate" type="number" min="0" max="100" step="0.1" value="1">%</label>
+        <label for="tax-rate">Cash tax rate<input id="tax-rate" type="number" min="0" max="100" step="0.1" value="21">%</label>
+        <label for="capex-rate">Capex / sales<input id="capex-rate" type="number" min="0" max="100" step="0.1" value="1">%</label>
+        <label for="working-capital-rate">Working capital / sales change<input id="working-capital-rate" type="number" min="0" max="100" step="0.1" value="5">%</label>
+      </div>
+      <div class="table-wrap assumptions-table" role="region" aria-label="Editable sales forecast assumptions" tabindex="0">
+        <table>
+          <thead><tr id="assumption-year-head"><th scope="col">Forecast assumptions ($M)</th></tr></thead>
+          <tbody id="assumption-body"></tbody>
+        </table>
+      </div>
+      <p class="footnote">The 2026 global sales starting point of $4,120M is an estimate: Alnylam’s low-end 2026 TTR guidance of $4,200M less an assumed $80M of ONPATTRO sales; the reported nine-month TTR geographic mix is used to split U.S. and ex-U.S. sales. 2027 onward is an illustrative forecast, not company guidance: $5,500M peak sales in 2030, then gradual erosion for competitive, access, and pricing pressure. COGS (28%) includes Sanofi royalties; SG&amp;A (22.9%) and all other allocations are approximate. Milestones default to $21.875M in 2026 and 2027. Cash taxes are a simplified positive-profit tax estimate; capex and working capital are modeled as percentages of sales and annual sales change. R&amp;D remains editable by year in the cash flow table. The discount rate remains editable above.</p>
+    </section>
     <p class="footnote">Enter R&amp;D, SG&amp;A, COGS, and Royalties &amp; Milestones as positive amounts. R&amp;D remains at zero under the current asset-level assumption. Cash Taxes are calculated as 21% of positive cash operating profit before capex and working capital (a simplified tax proxy); Capital Spending is 1% of sales; Change in Working Capital is 5% of the change in global sales, with 2026 treated as the initial investment year and negative changes releasing cash. Adjust these rates above the table. COGS is modeled at 28% of global sales and includes Sanofi royalties; SG&amp;A uses 22.9% of global sales. Royalties &amp; Milestones includes a 1% Blackstone royalty and estimated final $21.875M installments in 2026 and 2027. These operating-cost assumptions are proxies, not AMVUTTRA-specific reported expense allocations. NPV discounts 2026 cash flow at year 0 and later years by (1 + discount rate)<sup>year</sup>; Risk-Adjusted NPV applies cumulative PoS.</p>
   </main>
 
@@ -126,56 +146,57 @@
         { key: "capex", label: "Capital Spending" },
         { key: "workingCapital", label: "Change in Working Capital" }
       ];
-      let forecastYears = 9;
+      const salesAssumptions = [4120, 4700, 5100, 5400, 5500, 5400, 5200, 4850, 4500, 4100];
+      const milestoneAssumptions = [21.875, 21.875, 0, 0, 0, 0, 0, 0, 0, 0];
+      let forecastYears = salesAssumptions.length - 1;
       const values = Object.fromEntries(rowLabels.map(row => [row.key, Array(forecastYears + 1).fill(0)]));
-      const globalSalesForecast = [4120, 4700, 5100, 5400, 5500, 5400, 5200, 4850, 4500, 4100];
-      const xusShare = (363.041 + 248.786) / (2420.229 + 363.041 + 248.786);
-      const taxRateInput = document.getElementById("tax-rate");
-      const capexRateInput = document.getElementById("capex-rate");
-      const workingCapitalRateInput = document.getElementById("working-capital-rate");
-      values.rd.fill(0);
-      for (let year = 0; year <= forecastYears; year++) {
-        const globalSales = globalSalesForecast[year];
-        values.sales[year] = globalSales * (1 - xusShare);
-        values.salesXus[year] = globalSales * xusShare;
-        values.cogs[year] = globalSales * 0.28;
-        values.sga[year] = globalSales * 0.229;
-        values.royalties[year] = globalSales * 0.01 + (year <= 1 ? 21.875 : 0);
-      }
       const posValues = Array(forecastYears + 1).fill(100);
       const head = document.getElementById("year-head");
       const body = document.getElementById("table-body");
+      const assumptionHead = document.getElementById("assumption-year-head");
+      const assumptionBody = document.getElementById("assumption-body");
       const rateInput = document.getElementById("discount-rate");
       const npvOutput = document.getElementById("npv");
       const rnpvOutput = document.getElementById("rnpv");
       const addButton = document.getElementById("add-year");
       const removeButton = document.getElementById("remove-year");
+      const assumptionRates = {
+        xusShare: document.getElementById("xus-share"),
+        cogs: document.getElementById("cogs-rate"),
+        sga: document.getElementById("sga-rate"),
+        royalty: document.getElementById("royalty-rate"),
+        tax: document.getElementById("tax-rate"),
+        capex: document.getElementById("capex-rate"),
+        workingCapital: document.getElementById("working-capital-rate")
+      };
+      const derivedRows = ["sales", "salesXus", "sga", "cogs", "royalties", "taxes", "capex", "workingCapital"];
 
       function formatMoney(value) {
         return "$" + new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(value) + "M";
       }
-      function globalSalesAt(year) {
-        return (Number(values.sales[year]) || 0) + (Number(values.salesXus[year]) || 0);
-      }
-      function preTaxOperatingCashFlowAt(year) {
-        const v = key => Number(values[key][year]) || 0;
-        return globalSalesAt(year) - v("rd") - v("sga") - v("cogs") - v("royalties");
-      }
-      function derivedValueAt(key, year) {
-        const sales = globalSalesAt(year);
-        if (key === "taxes") return Math.max(0, preTaxOperatingCashFlowAt(year)) * (Number(taxRateInput.value) || 0) / 100;
-        if (key === "capex") return sales * (Number(capexRateInput.value) || 0) / 100;
-        if (key === "workingCapital") {
+      function pct(key) { return Number(assumptionRates[key].value) || 0; }
+      function globalSalesAt(year) { return Number(salesAssumptions[year]) || 0; }
+      function syncDerivedValues() {
+        for (let year = 0; year <= forecastYears; year++) {
+          const globalSales = globalSalesAt(year);
+          values.sales[year] = globalSales * pct("xusShare") / 100;
+          values.salesXus[year] = globalSales - values.sales[year];
+          values.cogs[year] = globalSales * pct("cogs") / 100;
+          values.sga[year] = globalSales * pct("sga") / 100;
+          values.royalties[year] = globalSales * pct("royalty") / 100 + (Number(milestoneAssumptions[year]) || 0);
+          const operatingProfit = globalSales - (Number(values.rd[year]) || 0) - values.sga[year] - values.cogs[year] - values.royalties[year];
+          values.taxes[year] = Math.max(0, operatingProfit) * pct("tax") / 100;
+          values.capex[year] = globalSales * pct("capex") / 100;
           const priorSales = year === 0 ? 0 : globalSalesAt(year - 1);
-          return (sales - priorSales) * (Number(workingCapitalRateInput.value) || 0) / 100;
+          values.workingCapital[year] = (globalSales - priorSales) * pct("workingCapital") / 100;
         }
-        return Number(values[key][year]) || 0;
       }
       function cashFlowAt(year) {
         const v = key => Number(values[key][year]) || 0;
-        return globalSalesAt(year) - v("rd") - v("sga") - v("cogs") - v("royalties") - derivedValueAt("taxes", year) - derivedValueAt("capex", year) - derivedValueAt("workingCapital", year);
+        return globalSalesAt(year) - v("rd") - v("sga") - v("cogs") - v("royalties") - v("taxes") - v("capex") - v("workingCapital");
       }
       function calculate() {
+        syncDerivedValues();
         const rate = (Number(rateInput.value) || 0) / 100;
         let npv = 0;
         let rnpv = 0;
@@ -183,26 +204,64 @@
           const pv = cashFlowAt(year) / Math.pow(1 + rate, year);
           npv += pv;
           rnpv += pv * (Number(posValues[year]) || 0) / 100;
+          for (const key of derivedRows) {
+            const input = document.getElementById("component-" + key + "-" + year);
+            if (input) input.value = values[key][year].toFixed(2);
+          }
+          const cell = document.getElementById("cash-flow-" + year);
+          if (cell) {
+            const flow = cashFlowAt(year);
+            cell.textContent = formatMoney(flow);
+            cell.className = "result " + (flow < 0 ? "negative" : flow > 0 ? "positive" : "");
+            cell.setAttribute("aria-label", (2026 + year) + " cash flow " + flow.toFixed(2) + " million dollars");
+          }
         }
         npvOutput.textContent = formatMoney(npv);
         npvOutput.style.color = npv < 0 ? "var(--negative)" : "var(--accent-dark)";
         rnpvOutput.textContent = formatMoney(rnpv);
         rnpvOutput.style.color = rnpv < 0 ? "var(--negative)" : "#6941a5";
-        for (let year = 0; year <= forecastYears; year++) {
-          for (const key of ["taxes", "capex", "workingCapital"]) {
-            const input = document.getElementById("component-" + key + "-" + year);
-            if (input) input.value = derivedValueAt(key, year).toFixed(2);
-          }
-          const cell = document.getElementById("cash-flow-" + year);
-          const flow = cashFlowAt(year);
-          cell.textContent = formatMoney(flow);
-          cell.className = "result " + (flow < 0 ? "negative" : flow > 0 ? "positive" : "");
-          cell.setAttribute("aria-label", (2026 + year) + " cash flow " + flow.toFixed(2) + " million dollars");
-        }
         removeButton.disabled = forecastYears <= 1;
         addButton.disabled = forecastYears >= 15;
       }
+      function renderAssumptions() {
+        assumptionHead.innerHTML = '<th scope="col">Forecast assumptions ($M)</th>';
+        for (let year = 0; year <= forecastYears; year++) {
+          const th = document.createElement("th");
+          th.scope = "col";
+          th.textContent = String(2026 + year);
+          assumptionHead.appendChild(th);
+        }
+        assumptionBody.innerHTML = "";
+        const rows = [
+          { key: "sales", label: "Global Net Sales", array: salesAssumptions },
+          { key: "milestone", label: "Milestone Payment", array: milestoneAssumptions }
+        ];
+        for (const row of rows) {
+          const tr = document.createElement("tr");
+          const th = document.createElement("th");
+          th.scope = "row";
+          th.textContent = row.label;
+          tr.appendChild(th);
+          for (let year = 0; year <= forecastYears; year++) {
+            const td = document.createElement("td");
+            const input = document.createElement("input");
+            input.type = "number";
+            input.step = "0.01";
+            input.inputMode = "decimal";
+            input.value = row.array[year] || 0;
+            input.setAttribute("aria-label", row.label + ", " + (2026 + year) + ", millions of dollars");
+            input.addEventListener("input", () => {
+              row.array[year] = Number(input.value) || 0;
+              calculate();
+            });
+            td.appendChild(input);
+            tr.appendChild(td);
+          }
+          assumptionBody.appendChild(tr);
+        }
+      }
       function render() {
+        syncDerivedValues();
         head.innerHTML = '<th scope="col">Cash flow components ($M)</th>';
         for (let year = 0; year <= forecastYears; year++) {
           const th = document.createElement("th");
@@ -223,15 +282,15 @@
             input.type = "number";
             input.step = "0.01";
             input.inputMode = "decimal";
-            const isDerived = ["taxes", "capex", "workingCapital"].includes(row.key);
             input.id = "component-" + row.key + "-" + year;
-            input.value = isDerived ? derivedValueAt(row.key, year).toFixed(2) : (values[row.key][year] === 0 && row.key !== "rd" ? "" : values[row.key][year]);
+            const isDerived = derivedRows.includes(row.key);
+            input.value = isDerived ? values[row.key][year].toFixed(2) : (values[row.key][year] === 0 && row.key !== "rd" ? "" : values[row.key][year]);
             input.placeholder = "0.00";
             input.setAttribute("aria-label", row.label + ", " + (2026 + year) + ", millions of dollars");
             if (isDerived) {
               input.readOnly = true;
               input.classList.add("derived-input");
-              input.title = "Calculated from the cash flow assumptions above";
+              input.title = "Calculated from editable assumptions below";
             } else {
               input.addEventListener("input", () => {
                 values[row.key][year] = Number(input.value) || 0;
@@ -280,34 +339,30 @@
           cashFlowRow.appendChild(td);
         }
         body.appendChild(cashFlowRow);
+        renderAssumptions();
         calculate();
       }
       addButton.addEventListener("click", () => {
         if (forecastYears >= 15) return;
+        const priorSales = globalSalesAt(forecastYears);
         forecastYears++;
+        salesAssumptions.push(priorSales * 0.9);
+        milestoneAssumptions.push(0);
         for (const row of rowLabels) values[row.key].push(0);
-        const addedYear = forecastYears;
-        const priorGlobalSales = globalSalesAt(addedYear - 1);
-        const addedGlobalSales = globalSalesForecast[addedYear] ?? priorGlobalSales * 0.9;
-        values.sales[addedYear] = addedGlobalSales * (1 - xusShare);
-        values.salesXus[addedYear] = addedGlobalSales * xusShare;
-        values.cogs[addedYear] = addedGlobalSales * 0.28;
-        values.sga[addedYear] = addedGlobalSales * 0.229;
-        values.royalties[addedYear] = addedGlobalSales * 0.01;
         posValues.push(100);
         render();
       });
       removeButton.addEventListener("click", () => {
         if (forecastYears <= 1) return;
         forecastYears--;
+        salesAssumptions.length = forecastYears + 1;
+        milestoneAssumptions.length = forecastYears + 1;
         for (const row of rowLabels) values[row.key].length = forecastYears + 1;
         posValues.length = forecastYears + 1;
         render();
       });
       rateInput.addEventListener("input", calculate);
-      taxRateInput.addEventListener("input", calculate);
-      capexRateInput.addEventListener("input", calculate);
-      workingCapitalRateInput.addEventListener("input", calculate);
+      for (const input of Object.values(assumptionRates)) input.addEventListener("input", calculate);
       render();
     })();
   </script>
