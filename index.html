@@ -91,7 +91,7 @@
         <button id="add-year" class="primary" type="button">+ Add year</button>
       </div>
     </div>
-    <p class="footnote">2027–2036 Net Sales use a flat $2,780M per year, carrying forward the 340B model’s Base case annualized run-rate (Low: $2,460M; Best: $3,090M). This is the modeled ATTR-CM demand series, not total global Amvuttra sales.</p>
+    <p class="footnote">2026 Net Sales are estimated at $2,166.13M by annualizing the 340B model’s 2026 baseline: (460 new starts + 1,897 continuing demand units) × $76,585 net price × 12. 2027–2035 use a flat $2,780M per year (340B Base case annualized run-rate). This is the modeled ATTR-CM demand series, not total global Amvuttra sales.</p>
 
     <div class="table-wrap" role="region" aria-label="Annual cash flow input table" tabindex="0">
       <table id="cash-flow-table">
@@ -101,7 +101,7 @@
     </div>
 
     <p class="formula"><strong>Cash Flow = Net Sales − R&amp;D − SG&amp;A − COGS − Royalties &amp; Milestones − Cash Taxes − Capital Spending − Change in Working Capital</strong></p>
-    <p class="footnote">Enter expense rows as positive amounts. Enter a negative change in working capital when it releases cash. Blank expense inputs are treated as zero, but R&amp;D may still include post-approval studies, manufacturing/CMC work, safety commitments, or lifecycle development. NPV discounts Cash Flow by (1 + discount rate)<sup>year</sup>. Risk-Adjusted NPV multiplies each year’s present value by cumulative PoS. For already-approved indications, use 100% unless a specific remaining clinical or regulatory hurdle affects those cash flows; model commercial uncertainty through sales scenarios.</p>
+    <p class="footnote">Enter expense rows as positive amounts. Enter a negative change in working capital when it releases cash. Blank expense inputs are treated as zero. R&amp;D is set to zero per the current assumption. NPV discounts Cash Flow by (1 + discount rate)<sup>year</sup>. Risk-Adjusted NPV multiplies each year’s present value by cumulative PoS. For already-approved indications, use 100% unless a specific remaining clinical or regulatory hurdle affects those cash flows; model commercial uncertainty through sales scenarios. 2026 COGS uses the reported nine-month 24.8% company ratio; 2027–2035 use the Q3 2026 ratio of 28.0%, which includes product royalties, so leave Royalties &amp; Milestones at zero to avoid double counting. SG&amp;A is allocated using company-wide net-product-revenue ratios: 2026 uses 25.0% for nine-month SG&amp;A excluding stock compensation; 2027–2035 use 22.9% based on Q3 non-GAAP SG&amp;A. Amvuttra-specific costs are not separately reported; these are illustrative estimates, not company guidance.</p>
   </main>
 
   <script>
@@ -116,9 +116,16 @@
         { key: "capex", label: "Capital Spending" },
         { key: "workingCapital", label: "Change in Working Capital" }
       ];
-      let forecastYears = 10;
+      let forecastYears = 9;
       const values = Object.fromEntries(rowLabels.map(row => [row.key, Array(forecastYears + 1).fill(0)]));
+      values.sales[0] = 2166.13;
       for (let year = 1; year <= forecastYears; year++) values.sales[year] = 2780;
+      values.cogs[0] = 537.20;
+      values.sga[0] = 541.78;
+      for (let year = 1; year <= forecastYears; year++) {
+        values.cogs[year] = 778.40;
+        values.sga[year] = 636.38;
+      }
       const posValues = Array(forecastYears + 1).fill(100);
       const head = document.getElementById("year-head");
       const body = document.getElementById("table-body");
@@ -179,7 +186,7 @@
             input.type = "number";
             input.step = "0.01";
             input.inputMode = "decimal";
-            input.value = values[row.key][year] === 0 ? "" : values[row.key][year];
+            input.value = values[row.key][year] === 0 && row.key !== "rd" ? "" : values[row.key][year];
             input.placeholder = "0.00";
             input.setAttribute("aria-label", row.label + ", " + (2026 + year) + ", millions of dollars");
             input.addEventListener("input", () => {
