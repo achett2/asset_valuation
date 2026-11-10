@@ -91,7 +91,7 @@
         <button id="add-year" class="primary" type="button">+ Add year</button>
       </div>
     </div>
-    <p class="footnote">2026 Net Sales are estimated at $2,166.13M by annualizing the 340B model’s 2026 baseline: (460 new starts + 1,897 continuing demand units) × $76,585 net price × 12. This is a run-rate equivalent, not reported FY2026 sales; if valuing from a date within 2026, include only cash flows after that date. 2027–2035 use a flat $2,780M per year (340B Base case annualized run-rate). This is the modeled ATTR-CM demand series, not total global Amvuttra sales.</p>
+    <p class="footnote">2026 U.S. Net Sales use the 340B model’s annualized 2026 baseline of $2,166.13M; 2027–2035 use $2,780M/year. Net Sales (xUS) is estimated by applying Alnylam’s reported AMVUTTRA ex-U.S./U.S. revenue mix: 25.3% for 2026 (nine months) and 24.4% for 2027–2035 (Q3 2026). This is a geographic mix proxy for the modeled ATTR-CM series, not a separate indication-level xUS forecast or total global sales.</p>
 
     <div class="table-wrap" role="region" aria-label="Annual cash flow input table" tabindex="0">
       <table id="cash-flow-table">
@@ -101,13 +101,14 @@
     </div>
 
     <p class="formula"><strong>Cash Flow = Net Sales − R&amp;D − SG&amp;A − COGS − Royalties &amp; Milestones − Cash Taxes − Capital Spending − Change in Working Capital</strong></p>
-    <p class="footnote">Enter expense rows as positive amounts. Enter a negative change in working capital when it releases cash. Blank expense inputs are treated as zero. R&amp;D is set to zero per the current assumption. NPV discounts Cash Flow by (1 + discount rate)<sup>year</sup>. Risk-Adjusted NPV multiplies each year’s present value by cumulative PoS. For already-approved indications, use 100% unless a specific remaining clinical or regulatory hurdle affects those cash flows; model commercial uncertainty through sales scenarios. 2026 COGS uses the reported nine-month 24.8% company ratio; 2027–2035 use the Q3 2026 ratio of 28.0%, which includes product royalties, so leave Royalties &amp; Milestones at zero to avoid double counting. SG&amp;A is allocated using company-wide net-product-revenue ratios: 2026 uses 25.0% for nine-month SG&amp;A excluding stock compensation; 2027–2035 use 22.9% based on Q3 non-GAAP SG&amp;A. Amvuttra-specific costs are not separately reported; these are illustrative estimates, not company guidance.</p>
+    <p class="footnote">Enter expense rows as positive amounts. Enter a negative change in working capital when it releases cash. Blank expense inputs are treated as zero. R&amp;D is set to zero per the current assumption. NPV discounts Cash Flow by (1 + discount rate)<sup>year</sup>. Risk-Adjusted NPV multiplies each year’s present value by cumulative PoS. For already-approved indications, use 100% unless a specific remaining clinical or regulatory hurdle affects those cash flows; model commercial uncertainty through sales scenarios. COGS is recalculated on U.S. + xUS sales: 24.8% for 2026 and 28.0% for 2027–2035, based on Alnylam’s reported company ratios; these COGS figures include Sanofi’s royalty. SG&amp;A is also applied to combined sales: 25.0% for 2026 (nine-month cash-like SG&amp;A proxy, excluding stock compensation) and 22.9% for 2027–2035 (Q3 non-GAAP SG&amp;A ratio). Royalties &amp; Milestones includes a 1% Blackstone royalty on modeled combined sales and estimated final $21.875M installments in 2026 and 2027 from the $175M triggered payment. Exact installments should be updated if the schedule differs. Amvuttra-specific COGS and SG&amp;A are not separately reported; estimates are illustrative, not company guidance.</p>
   </main>
 
   <script>
     (() => {
       const rowLabels = [
         { key: "sales", label: "Net Sales" },
+        { key: "salesXus", label: "Net Sales (xUS)" },
         { key: "rd", label: "R&D" },
         { key: "sga", label: "SG&A" },
         { key: "cogs", label: "COGS" },
@@ -118,13 +119,21 @@
       ];
       let forecastYears = 9;
       const values = Object.fromEntries(rowLabels.map(row => [row.key, Array(forecastYears + 1).fill(0)]));
+      const xusRatio2026 = (363.041 + 248.786) / 2420.229;
+      const xusRatioForecast = (130.718 + 91.049) / 908.596;
+      const sgaRatio2026 = (1012.473 - 137.030) / 3500.182;
+      const sgaRatioForecast = 295.743 / 1291.946;
       values.sales[0] = 2166.13;
-      for (let year = 1; year <= forecastYears; year++) values.sales[year] = 2780;
-      values.cogs[0] = 537.20;
-      values.sga[0] = 541.78;
+      values.salesXus[0] = 547.59;
+      values.cogs[0] = 673.00;
+      values.sga[0] = 678.74;
+      values.royalties[0] = 49.01;
       for (let year = 1; year <= forecastYears; year++) {
-        values.cogs[year] = 778.40;
-        values.sga[year] = 636.38;
+        values.sales[year] = 2780;
+        values.salesXus[year] = 678.53;
+        values.cogs[year] = 968.39;
+        values.sga[year] = 791.70;
+        values.royalties[year] = year === 1 ? 56.46 : 34.59;
       }
       const posValues = Array(forecastYears + 1).fill(100);
       const head = document.getElementById("year-head");
@@ -140,7 +149,7 @@
       }
       function cashFlowAt(year) {
         const v = key => Number(values[key][year]) || 0;
-        return v("sales") - v("rd") - v("sga") - v("cogs") - v("royalties") - v("taxes") - v("capex") - v("workingCapital");
+        return v("sales") + v("salesXus") - v("rd") - v("sga") - v("cogs") - v("royalties") - v("taxes") - v("capex") - v("workingCapital");
       }
       function calculate() {
         const rate = (Number(rateInput.value) || 0) / 100;
@@ -240,7 +249,14 @@
       addButton.addEventListener("click", () => {
         if (forecastYears >= 15) return;
         forecastYears++;
-        for (const row of rowLabels) values[row.key].push(row.key === "sales" ? 2780 : 0);
+        for (const row of rowLabels) values[row.key].push(0);
+        const addedYear = forecastYears;
+        values.sales[addedYear] = 2780;
+        values.salesXus[addedYear] = 2780 * xusRatioForecast;
+        const addedGlobalSales = values.sales[addedYear] + values.salesXus[addedYear];
+        values.cogs[addedYear] = addedGlobalSales * 0.28;
+        values.sga[addedYear] = addedGlobalSales * sgaRatioForecast;
+        values.royalties[addedYear] = addedGlobalSales * 0.01;
         posValues.push(100);
         render();
       });
