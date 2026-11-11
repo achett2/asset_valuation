@@ -49,16 +49,16 @@ input{font:inherit;color:var(--ink)}input[type=number]{width:100%;min-width:70px
 </ul></section>
     </div>
     <section id="patient-panel" role="tabpanel" aria-labelledby="patient-tab" hidden>
-      <p class="patient-intro">A simple, indication-specific patient funnel. Enter annual patients entering each treatment setting and uptake below; then add treatment duration and a hypothetical net price to estimate Setidegrasib-only sales. This forecast is conditional on approval and is separate from probability-of-success adjustment in rNPV.</p>
+      <p class="patient-intro">An editable U.S. patient-to-revenue base case seeded from the supplied market overviews. Annual setting populations and product uptake ramps are editable. Sales are conditional on approval and separate from probability-of-success adjustment in rNPV.</p>
       <div class="card patient-card">
         <h2>First-line metastatic PDAC</h2>
-        <p class="footnote">Setidegrasib plus first-line chemotherapy in metastatic KRAS G12D-positive PDAC. Enter the annual number entering this treatment setting before biomarker filtering.</p>
+        <p class="footnote">Setidegrasib plus first-line chemotherapy in metastatic KRAS G12D-positive PDAC. Annual setting population starts at 22,579 in 2026 and grows 1% per year. The patient input is before biomarker filtering.</p>
         <div class="assumption-controls patient-controls">
           <label>KRAS G12D prevalence<input id="pdac-prev" type="number" min="0" max="100" step="0.1" value="40">%</label>
-          <label>Testing / identification rate<input id="pdac-test" type="number" min="0" max="100" step="0.1" value="100">%</label>
+          <label>Testing / identification rate<input id="pdac-test" type="number" min="0" max="100" step="0.1" value="65">%</label>
           <label>Clinical eligibility<input id="pdac-eligible" type="number" min="0" max="100" step="0.1" value="100">%</label>
-          <label>Average treatment duration<input id="pdac-duration" type="number" min="0" max="36" step="0.1" value="6">months</label>
-          <label>Net price per treatment month<input id="pdac-price" type="number" min="0" step="1000" value="0">$</label>
+          <label>Average treatment duration<input id="pdac-duration" type="number" min="0" max="36" step="0.1" value="6.3">months</label>
+          <label>Net price per treatment month<input id="pdac-price" type="number" min="0" step="1000" value="31200">$</label>
         </div>
         <h3>Annual patient-to-revenue forecast</h3>
         <div class="table-wrap patient-table-wrap" role="region" aria-label="PDAC patient-to-revenue forecast" tabindex="0"><table class="patient-table"><thead><tr><th>Year</th><th>Entering setting</th><th>Eligible KRAS G12D+</th><th>Uptake</th><th>New starts</th><th>Active patient-years</th><th>Sales ($M)</th></tr></thead><tbody id="pdac-output"></tbody></table></div>
@@ -67,13 +67,13 @@ input{font:inherit;color:var(--ink)}input[type=number]{width:100%;min-width:70px
       </div>
       <div class="card patient-card">
         <h2>Previously treated KRAS G12D NSCLC</h2>
-        <p class="footnote">Use the population entering the study-relevant setting after platinum chemotherapy and checkpoint inhibitor therapy—not all lung cancer cases.</p>
+        <p class="footnote">Use the population entering the study-relevant setting after platinum chemotherapy and checkpoint inhibitor therapy—not all lung cancer cases. The base case starts at 43,347 patients reaching 2L systemic therapy in 2026, then models the report’s 30% peak pool erosion by 2034.</p>
         <div class="assumption-controls patient-controls">
-          <label>KRAS G12D prevalence<input id="nsclc-prev" type="number" min="0" max="100" step="0.1" value="5">%</label>
-          <label>Testing / identification rate<input id="nsclc-test" type="number" min="0" max="100" step="0.1" value="100">%</label>
+          <label>KRAS G12D prevalence<input id="nsclc-prev" type="number" min="0" max="100" step="0.1" value="4">%</label>
+          <label>Testing / identification rate<input id="nsclc-test" type="number" min="0" max="100" step="0.1" value="70">%</label>
           <label>Clinical eligibility<input id="nsclc-eligible" type="number" min="0" max="100" step="0.1" value="100">%</label>
-          <label>Average treatment duration<input id="nsclc-duration" type="number" min="0" max="36" step="0.1" value="6">months</label>
-          <label>Net price per treatment month<input id="nsclc-price" type="number" min="0" step="1000" value="0">$</label>
+          <label>Average treatment duration<input id="nsclc-duration" type="number" min="0" max="36" step="0.1" value="6.3">months</label>
+          <label>Net price per treatment month<input id="nsclc-price" type="number" min="0" step="1000" value="23400">$</label>
         </div>
         <h3>Annual patient-to-revenue forecast</h3>
         <div class="table-wrap patient-table-wrap" role="region" aria-label="NSCLC patient-to-revenue forecast" tabindex="0"><table class="patient-table"><thead><tr><th>Year</th><th>Entering setting</th><th>Eligible KRAS G12D+</th><th>Uptake</th><th>New starts</th><th>Active patient-years</th><th>Sales ($M)</th></tr></thead><tbody id="nsclc-output"></tbody></table></div>
@@ -81,7 +81,8 @@ input{font:inherit;color:var(--ink)}input[type=number]{width:100%;min-width:70px
         <div class="table-wrap patient-table-wrap" role="region" aria-label="NSCLC annual patient and uptake assumptions" tabindex="0"><table class="patient-input-table"><thead><tr><th>Year</th><th>Patients entering previously treated setting</th><th>Setidegrasib share of eligible patients</th></tr></thead><tbody id="nsclc-inputs"></tbody></table></div>
       </div>
       <p class="footnote"><strong>How the math works:</strong> Eligible KRAS G12D+ patients = patients entering the setting × prevalence × testing rate × clinical eligibility. New starts = eligible patients × uptake. Starts are assumed to occur evenly through each year; average treatment duration carries cohorts forward into later years. Sales = patient-months on Setidegrasib × net price per patient-month. The net price is an editable scenario input, not an observed or approved price. Do not include chemotherapy revenue in the Setidegrasib forecast.</p>
-      <p class="footnote"><strong>Reference inputs:</strong> Astellas cites KRAS G12D in approximately 40% of PDAC and 5% of NSCLC; both prevalence figures are editable. The PDAC Phase 3 study is in first-line metastatic disease and the NSCLC Phase 3 study is in previously treated locally advanced or metastatic KRAS G12D disease. Population, testing, eligibility, uptake, treatment-duration, and price inputs are user assumptions unless sourced separately. Astellas trial sources: <a href="https://newsroom.astellas.com/2026-04-15-astellas-doses-first-patient-in-phase-3-study-of-setidegrasib-for-kras-g12d-mutated-metastatic-pancreatic-ductal-adenocarcinoma" target="_blank" rel="noopener">PDAC study</a>; <a href="https://newsroom.astellas.com/2026-09-23-Astellas-Doses-First-Patient-in-Phase-3-Study-of-setidegrasib-in-Previously-Treated-KRAS-G12D-Mutated-Advanced-Non-Small-Cell-Lung-Cancer" target="_blank" rel="noopener">NSCLC study</a>; <a href="https://www.astellas.com/content/dam/astellas-com/global/en/confidential-documents/financial-results/4q2025_pre_en.pdf" target="_blank" rel="noopener">mutation prevalence source</a>.</p>
+      <p class="footnote"><strong>Seeded U.S. base case:</strong> The PDAC population grows 1% annually; NSCLC’s 2L pool is reduced gradually to 30% below its 2026 level by 2034 to reflect potential 1L migration. Uptake is zero before the assumed 2030 launch, then ramps to the market report’s class uptake × asset share (PDAC: 75% × 15% = 11.25%; NSCLC: 75% × 25% = 18.75%) by 2034. Treatment duration is 6.3 effective months (7 months × 90% compliance). Monthly net prices are illustrative: PDAC $31,200 (WAC $40,000 less 22% gross-to-net) and NSCLC $23,400 (WAC $30,000 less 22%). These are scenario inputs for a hypothetical class entrant, not Setidegrasib-specific guidance or an approved price. Clinical eligibility remains 100%; the market report captures fitness and class-choice limits in uptake, so this avoids counting them twice.</p>
+      <p class="footnote"><strong>Reference inputs:</strong> The supplied market overviews use KRAS G12D prevalence of approximately 40% in PDAC and 4% in NSCLC; both prevalence figures are editable. The PDAC Phase 3 study is in first-line metastatic disease and the NSCLC Phase 3 study is in previously treated locally advanced or metastatic KRAS G12D disease. Population, testing, launch, uptake, treatment-duration, and price inputs are market-model assumptions; price and uptake are not Setidegrasib-specific. Astellas trial sources: <a href="https://newsroom.astellas.com/2026-04-15-astellas-doses-first-patient-in-phase-3-study-of-setidegrasib-for-kras-g12d-mutated-metastatic-pancreatic-ductal-adenocarcinoma" target="_blank" rel="noopener">PDAC study</a>; <a href="https://newsroom.astellas.com/2026-09-23-Astellas-Doses-First-Patient-in-Phase-3-Study-of-setidegrasib-in-Previously-Treated-KRAS-G12D-Mutated-Advanced-Non-Small-Cell-Lung-Cancer" target="_blank" rel="noopener">NSCLC study</a>; <a href="https://www.astellas.com/content/dam/astellas-com/global/en/confidential-documents/financial-results/4q2025_pre_en.pdf" target="_blank" rel="noopener">mutation prevalence source</a>.</p>
     </section>
 </main>
 <script>
@@ -109,8 +110,8 @@ document.getElementById("discount-rate").addEventListener("input",calc);for(cons
 </script><script>
 (()=>{const years=Array.from({length:10},(_,i)=>2026+i);
 const data={
- pdac:{patients:Array(10).fill(0),uptake:Array(10).fill(0),prev:"pdac-prev",test:"pdac-test",eligible:"pdac-eligible",duration:"pdac-duration",price:"pdac-price",inputBody:"pdac-inputs",outputBody:"pdac-output"},
- nsclc:{patients:Array(10).fill(0),uptake:Array(10).fill(0),prev:"nsclc-prev",test:"nsclc-test",eligible:"nsclc-eligible",duration:"nsclc-duration",price:"nsclc-price",inputBody:"nsclc-inputs",outputBody:"nsclc-output"}
+ pdac:{patients:[22579,22805,23033,23264,23497,23732,23969,24209,24451,24696],uptake:[0,0,0,0,1.125,4.5,7.875,10.125,11.25,11.25],prev:"pdac-prev",test:"pdac-test",eligible:"pdac-eligible",duration:"pdac-duration",price:"pdac-price",inputBody:"pdac-inputs",outputBody:"pdac-output"},
+ nsclc:{patients:[43347,43347,43347,43347,41180,39012,36845,34678,32510,30343],uptake:[0,0,0,0,1.875,7.5,13.125,16.875,18.75,18.75],prev:"nsclc-prev",test:"nsclc-test",eligible:"nsclc-eligible",duration:"nsclc-duration",price:"nsclc-price",inputBody:"nsclc-inputs",outputBody:"nsclc-output"}
 };
 const pct=id=>(Number(document.getElementById(id).value)||0)/100;
 const num=id=>Number(document.getElementById(id).value)||0;
