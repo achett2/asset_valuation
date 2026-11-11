@@ -12,11 +12,18 @@ input{font:inherit;color:var(--ink)}input[type=number]{width:100%;min-width:70px
 .controls{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0 8px}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px}table{width:100%;border-collapse:separate;border-spacing:0;min-width:760px}th,td{padding:9px 10px;border-bottom:1px solid var(--line)}thead th{position:sticky;top:0;z-index:1;background:#f4f8fa;color:#536978;font-size:12px;text-align:right;white-space:nowrap}thead th:first-child{text-align:left;min-width:218px}tbody th{width:218px;text-align:left;font-weight:650;white-space:nowrap}tbody td{min-width:108px;text-align:right}tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}.cashflow th,.cashflow td{background:#edf8f7;border-top:2px solid #a8d6d4;font-weight:750}.result{font-variant-numeric:tabular-nums}.positive{color:var(--positive)}.negative{color:var(--negative)}
 .formula{margin:12px 1px 0;padding:11px 13px;border-left:3px solid var(--accent);border-radius:4px 8px 8px 4px;background:var(--soft);color:#435967;font-size:12px}.formula strong{color:var(--ink)}
 .assumptions{margin-top:16px;padding:16px}.assumptions h2{margin:0 0 4px;font-size:18px}.assumption-intro{margin:0 0 12px;color:var(--muted)}.assumption-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin:0 0 13px;padding:12px;border:1px solid var(--line);border-radius:10px;background:#f8fafb}.assumption-controls label{display:flex;align-items:center;gap:7px;font-size:12px}.assumption-controls input{width:78px;min-width:65px;padding:6px}.assumptions-table table{min-width:760px}.footnote{margin:8px 1px 0}.source-list{padding-left:18px}.source-list li{margin:4px 0}.source-list a{color:var(--accent-dark)}
+.tabbar{display:flex;gap:8px;border-bottom:1px solid var(--line);margin:14px 0 4px}.tab-button{border:1px solid var(--line);border-bottom:0;border-radius:9px 9px 0 0;padding:9px 14px;background:#f8fafb;color:var(--muted);font:inherit;font-weight:700;cursor:pointer}.tab-button.active{background:#eaf7f6;color:var(--accent-dark);border-color:#a8d6d4}.tab-button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}#patient-panel[hidden]{display:none}.patient-intro{margin:12px 1px;color:var(--muted)}.patient-card{padding:16px;margin:14px 0}.patient-card h2{margin:0 0 3px;font-size:18px}.patient-card h3{margin:14px 0 7px;font-size:14px}.patient-controls{margin:10px 0 12px}.patient-controls label{display:flex;align-items:center;gap:7px;font-size:12px}.patient-controls input{width:96px;min-width:78px}.patient-table-wrap{margin-bottom:8px}.patient-table{min-width:720px}.patient-table th:first-child{min-width:76px}.patient-table td{font-variant-numeric:tabular-nums}.patient-input-table{min-width:600px}.patient-input-table th:first-child{min-width:76px}.patient-input-table input{min-width:105px}.patient-input-table td:nth-child(2),.patient-input-table td:nth-child(3){min-width:210px}.patient-input-table td{min-width:100px}.patient-result{font-weight:700}.patient-result.positive{color:var(--positive)}.patient-note{color:var(--muted);font-size:12px}
+@media(max-width:650px){.tab-button{flex:1;padding:9px 8px;font-size:13px}.patient-controls{display:grid;grid-template-columns:1fr 1fr}.patient-controls label{align-items:flex-start;flex-direction:column}.patient-controls input{width:100%}}
 @media(max-width:650px){body{padding:16px 12px}header{display:block}.nav{margin-top:12px}.summary{grid-template-columns:1fr 1fr;align-items:flex-start;gap:12px}.rate-control{grid-column:1/-1}.controls{align-items:flex-start;flex-direction:column}h1{font-size:20px}}
 </style>
 </head>
 <body><main class="app">
 <header><div><h1>Setidegrasib (ASP3082) Asset Valuation</h1><p class="subtitle">Illustrative 2026–2035 forecast for a Phase 3 oncology asset. Enter annual amounts in $ millions.</p></div><nav class="nav" aria-label="Asset models"><a href="./">Amvuttra</a><a class="active" href="./setidegrasib.html" aria-current="page">Setidegrasib</a></nav></header>
+    <div class="tabbar" role="tablist" aria-label="Setidegrasib tools">
+      <button class="tab-button active" id="npv-tab" type="button" role="tab" aria-selected="true" aria-controls="npv-panel">NPV calculator</button>
+      <button class="tab-button" id="patient-tab" type="button" role="tab" aria-selected="false" aria-controls="patient-panel">Patient-to-revenue forecast</button>
+    </div>
+    <div id="npv-panel" role="tabpanel" aria-labelledby="npv-tab">
 <section class="summary card" aria-live="polite"><div><div class="summary-label">Net Present Value</div><div class="summary-value" id="npv">$0.00M</div></div><div><div class="summary-label">Risk-Adjusted NPV</div><div class="summary-value risk" id="rnpv">$0.00M</div></div><div class="rate-control"><label for="discount-rate">Annual discount rate</label><input class="rate-input" id="discount-rate" type="number" min="0" max="100" step="0.1" value="10"><span class="units">%</span></div></section>
 <div class="controls"><div class="units">Forecast years: 2026–2035. Values are in $M. Sales assumptions are global and split into U.S. and ex-U.S. below.</div></div>
 <p class="footnote">Edit indication-level sales and operating assumptions at the bottom. Enter R&amp;D and cumulative PoS by year in the table. Assumptions are illustrative and are not Astellas guidance.</p>
@@ -40,6 +47,42 @@ input{font:inherit;color:var(--ink)}input[type=number]{width:100%;min-width:70px
 <li><a href="https://newsroom.astellas.com/2026-04-15-astellas-doses-first-patient-in-phase-3-study-of-setidegrasib-for-kras-g12d-mutated-metastatic-pancreatic-ductal-adenocarcinoma" target="_blank" rel="noopener">Astellas Phase 3 PDAC study announcement</a> (first-line metastatic PDAC in combination with chemotherapy).</li>
 <li><a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2600752" target="_blank" rel="noopener">Phase 1 results in the New England Journal of Medicine</a>: early antitumor activity supports development, but does not establish Phase 3 success or commercial uptake.</li>
 </ul></section>
+    </div>
+    <section id="patient-panel" role="tabpanel" aria-labelledby="patient-tab" hidden>
+      <p class="patient-intro">A simple, indication-specific patient funnel. Enter annual patients entering each treatment setting and uptake below; then add treatment duration and a hypothetical net price to estimate Setidegrasib-only sales. This forecast is conditional on approval and is separate from probability-of-success adjustment in rNPV.</p>
+      <div class="card patient-card">
+        <h2>First-line metastatic PDAC</h2>
+        <p class="footnote">Setidegrasib plus first-line chemotherapy in metastatic KRAS G12D-positive PDAC. Enter the annual number entering this treatment setting before biomarker filtering.</p>
+        <div class="assumption-controls patient-controls">
+          <label>KRAS G12D prevalence<input id="pdac-prev" type="number" min="0" max="100" step="0.1" value="40">%</label>
+          <label>Testing / identification rate<input id="pdac-test" type="number" min="0" max="100" step="0.1" value="100">%</label>
+          <label>Clinical eligibility<input id="pdac-eligible" type="number" min="0" max="100" step="0.1" value="100">%</label>
+          <label>Average treatment duration<input id="pdac-duration" type="number" min="0" max="36" step="0.1" value="6">months</label>
+          <label>Net price per treatment month<input id="pdac-price" type="number" min="0" step="1000" value="0">$</label>
+        </div>
+        <h3>Annual patient-to-revenue forecast</h3>
+        <div class="table-wrap patient-table-wrap" role="region" aria-label="PDAC patient-to-revenue forecast" tabindex="0"><table class="patient-table"><thead><tr><th>Year</th><th>Entering setting</th><th>Eligible KRAS G12D+</th><th>Uptake</th><th>New starts</th><th>Active patient-years</th><th>Sales ($M)</th></tr></thead><tbody id="pdac-output"></tbody></table></div>
+        <h3>Editable annual assumptions</h3>
+        <div class="table-wrap patient-table-wrap" role="region" aria-label="PDAC annual patient and uptake assumptions" tabindex="0"><table class="patient-input-table"><thead><tr><th>Year</th><th>Patients entering first-line metastatic setting</th><th>Setidegrasib share of eligible patients</th></tr></thead><tbody id="pdac-inputs"></tbody></table></div>
+      </div>
+      <div class="card patient-card">
+        <h2>Previously treated KRAS G12D NSCLC</h2>
+        <p class="footnote">Use the population entering the study-relevant setting after platinum chemotherapy and checkpoint inhibitor therapy—not all lung cancer cases.</p>
+        <div class="assumption-controls patient-controls">
+          <label>KRAS G12D prevalence<input id="nsclc-prev" type="number" min="0" max="100" step="0.1" value="5">%</label>
+          <label>Testing / identification rate<input id="nsclc-test" type="number" min="0" max="100" step="0.1" value="100">%</label>
+          <label>Clinical eligibility<input id="nsclc-eligible" type="number" min="0" max="100" step="0.1" value="100">%</label>
+          <label>Average treatment duration<input id="nsclc-duration" type="number" min="0" max="36" step="0.1" value="6">months</label>
+          <label>Net price per treatment month<input id="nsclc-price" type="number" min="0" step="1000" value="0">$</label>
+        </div>
+        <h3>Annual patient-to-revenue forecast</h3>
+        <div class="table-wrap patient-table-wrap" role="region" aria-label="NSCLC patient-to-revenue forecast" tabindex="0"><table class="patient-table"><thead><tr><th>Year</th><th>Entering setting</th><th>Eligible KRAS G12D+</th><th>Uptake</th><th>New starts</th><th>Active patient-years</th><th>Sales ($M)</th></tr></thead><tbody id="nsclc-output"></tbody></table></div>
+        <h3>Editable annual assumptions</h3>
+        <div class="table-wrap patient-table-wrap" role="region" aria-label="NSCLC annual patient and uptake assumptions" tabindex="0"><table class="patient-input-table"><thead><tr><th>Year</th><th>Patients entering previously treated setting</th><th>Setidegrasib share of eligible patients</th></tr></thead><tbody id="nsclc-inputs"></tbody></table></div>
+      </div>
+      <p class="footnote"><strong>How the math works:</strong> Eligible KRAS G12D+ patients = patients entering the setting × prevalence × testing rate × clinical eligibility. New starts = eligible patients × uptake. Starts are assumed to occur evenly through each year; average treatment duration carries cohorts forward into later years. Sales = patient-months on Setidegrasib × net price per patient-month. The net price is an editable scenario input, not an observed or approved price. Do not include chemotherapy revenue in the Setidegrasib forecast.</p>
+      <p class="footnote"><strong>Reference inputs:</strong> Astellas cites KRAS G12D in approximately 40% of PDAC and 5% of NSCLC; both prevalence figures are editable. The PDAC Phase 3 study is in first-line metastatic disease and the NSCLC Phase 3 study is in previously treated locally advanced or metastatic KRAS G12D disease. Population, testing, eligibility, uptake, treatment-duration, and price inputs are user assumptions unless sourced separately. Astellas trial sources: <a href="https://newsroom.astellas.com/2026-04-15-astellas-doses-first-patient-in-phase-3-study-of-setidegrasib-for-kras-g12d-mutated-metastatic-pancreatic-ductal-adenocarcinoma" target="_blank" rel="noopener">PDAC study</a>; <a href="https://newsroom.astellas.com/2026-09-23-Astellas-Doses-First-Patient-in-Phase-3-Study-of-setidegrasib-in-Previously-Treated-KRAS-G12D-Mutated-Advanced-Non-Small-Cell-Lung-Cancer" target="_blank" rel="noopener">NSCLC study</a>; <a href="https://www.astellas.com/content/dam/astellas-com/global/en/confidential-documents/financial-results/4q2025_pre_en.pdf" target="_blank" rel="noopener">mutation prevalence source</a>.</p>
+    </section>
 </main>
 <script>
 (()=>{const years=Array.from({length:10},(_,i)=>2026+i);
@@ -62,5 +105,57 @@ function render(){let head=document.getElementById("year-head"),body=document.ge
 let pr=document.createElement("tr"),pt=document.createElement("th");pt.scope="row";pt.textContent="Cumulative PoS (%)";pr.appendChild(pt);for(let i=0;i<10;i++){let td=document.createElement("td"),inp=document.createElement("input");inp.type="number";inp.min="0";inp.max="100";inp.step="0.1";inp.value=pos[i];inp.setAttribute("aria-label","Cumulative probability of success, "+years[i]+", percent");inp.addEventListener("input",()=>{pos[i]=Math.max(0,Math.min(100,Number(inp.value)||0));calc()});td.appendChild(inp);pr.appendChild(td)}body.appendChild(pr);
 let tr=document.createElement("tr");tr.className="cashflow";let th=document.createElement("th");th.scope="row";th.textContent="Cash Flow";tr.appendChild(th);for(let i=0;i<10;i++){let td=document.createElement("td");td.id="cf-"+i;td.className="result";td.textContent="$0.00M";tr.appendChild(td)}body.appendChild(tr);renderAssumptions();calc()}
 document.getElementById("discount-rate").addEventListener("input",calc);for(const id of Object.values(rates))document.getElementById(id).addEventListener("input",calc);render()
+})();
+</script><script>
+(()=>{const years=Array.from({length:10},(_,i)=>2026+i);
+const data={
+ pdac:{patients:Array(10).fill(0),uptake:Array(10).fill(0),prev:"pdac-prev",test:"pdac-test",eligible:"pdac-eligible",duration:"pdac-duration",price:"pdac-price",inputBody:"pdac-inputs",outputBody:"pdac-output"},
+ nsclc:{patients:Array(10).fill(0),uptake:Array(10).fill(0),prev:"nsclc-prev",test:"nsclc-test",eligible:"nsclc-eligible",duration:"nsclc-duration",price:"nsclc-price",inputBody:"nsclc-inputs",outputBody:"nsclc-output"}
+};
+const pct=id=>(Number(document.getElementById(id).value)||0)/100;
+const num=id=>Number(document.getElementById(id).value)||0;
+const fmt=n=>new Intl.NumberFormat("en-US",{maximumFractionDigits:1}).format(n);
+const cash=n=>"$"+new Intl.NumberFormat("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
+function drawInputs(key){
+ const x=data[key],body=document.getElementById(x.inputBody);body.innerHTML="";
+ years.forEach((year,i)=>{const tr=document.createElement("tr");
+ const y=document.createElement("th");y.scope="row";y.textContent=year;tr.appendChild(y);
+ for(const field of ["patients","uptake"]){const td=document.createElement("td"),input=document.createElement("input");input.type="number";input.min="0";input.step=field==="uptake"?"0.1":"1";input.value=x[field][i];input.setAttribute("aria-label",key+" "+(field==="patients"?"patients entering setting":"uptake share")+" "+year+(field==="uptake"?" percent":""));input.addEventListener("input",()=>{x[field][i]=Math.max(0,Number(input.value)||0);if(field==="uptake")x[field][i]=Math.min(100,x[field][i]);calculate(key)});td.appendChild(input);tr.appendChild(td)}
+ body.appendChild(tr)})
+}
+function calculate(key){
+ const x=data[key],out=document.getElementById(x.outputBody);out.innerHTML="";
+ const eligibleByYear=x.patients.map(p=>p*pct(x.prev)*pct(x.test)*pct(x.eligible));
+ const starts=eligibleByYear.map((n,i)=>n*Math.min(1,pct(x.inputBody==="pdac-inputs"?"pdac-temp":"nsclc-temp")));
+}
+function compute(key){
+ const x=data[key],out=document.getElementById(x.outputBody);out.innerHTML="";
+ const prev=pct(x.prev),test=pct(x.test),clinical=pct(x.eligible),duration=num(x.duration),monthlyPrice=num(x.price);
+ const eligible=x.patients.map(p=>p*prev*test*clinical),starts=eligible.map((p,i)=>p*x.uptake[i]/100);
+ const patientMonthsByYear=Array(10).fill(0);
+ for(let month=0;month<120;month++){
+   const year=Math.floor(month/12);
+   let active=0;
+   for(let startMonth=Math.max(0,month-Math.ceil(duration)+1);startMonth<=month;startMonth++){
+     const lag=month-startMonth;
+     const monthWeight=Math.min(1,Math.max(0,duration-lag));
+     active+=(starts[Math.floor(startMonth/12)]/12)*monthWeight;
+   }
+   patientMonthsByYear[year]+=active;
+ }
+ years.forEach((year,i)=>{
+   const tr=document.createElement("tr");
+   const vals=[year,fmt(x.patients[i]),fmt(eligible[i]),fmt(x.uptake[i])+"%",fmt(starts[i]),fmt(patientMonthsByYear[i]/12),cash(patientMonthsByYear[i]*monthlyPrice/1000000)];
+   vals.forEach((v,j)=>{const td=document.createElement(j===0?"th":"td");if(j===0)td.scope="row";td.textContent=v;if(j===6)td.className="patient-result "+(patientMonthsByYear[i]>0?"positive":"");tr.appendChild(td)});
+   out.appendChild(tr);
+ });
+}
+Object.keys(data).forEach(key=>{
+ const x=data[key];drawInputs(key);
+ for(const id of [x.prev,x.test,x.eligible,x.duration,x.price])document.getElementById(id).addEventListener("input",()=>compute(key));
+ compute(key);
+});
+const tabs=[["npv-tab","npv-panel"],["patient-tab","patient-panel"]];
+for(const [buttonId,panelId] of tabs){const button=document.getElementById(buttonId);button.addEventListener("click",()=>{for(const [b,p] of tabs){const active=b===buttonId;document.getElementById(b).classList.toggle("active",active);document.getElementById(b).setAttribute("aria-selected",String(active));document.getElementById(p).hidden=!active}})}
 })();
 </script></body></html>
