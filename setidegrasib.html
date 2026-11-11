@@ -120,13 +120,8 @@ function drawInputs(key){
  const x=data[key],body=document.getElementById(x.inputBody);body.innerHTML="";
  years.forEach((year,i)=>{const tr=document.createElement("tr");
  const y=document.createElement("th");y.scope="row";y.textContent=year;tr.appendChild(y);
- for(const field of ["patients","uptake"]){const td=document.createElement("td"),input=document.createElement("input");input.type="number";input.min="0";input.step=field==="uptake"?"0.1":"1";input.value=x[field][i];input.setAttribute("aria-label",key+" "+(field==="patients"?"patients entering setting":"uptake share")+" "+year+(field==="uptake"?" percent":""));input.addEventListener("input",()=>{x[field][i]=Math.max(0,Number(input.value)||0);if(field==="uptake")x[field][i]=Math.min(100,x[field][i]);calculate(key)});td.appendChild(input);tr.appendChild(td)}
+ for(const field of ["patients","uptake"]){const td=document.createElement("td"),input=document.createElement("input");input.type="number";input.min="0";input.step=field==="uptake"?"0.1":"1";input.value=x[field][i];input.setAttribute("aria-label",key+" "+(field==="patients"?"patients entering setting":"uptake share")+" "+year+(field==="uptake"?" percent":""));input.addEventListener("input",()=>{x[field][i]=Math.max(0,Number(input.value)||0);if(field==="uptake")x[field][i]=Math.min(100,x[field][i]);compute(key)});td.appendChild(input);tr.appendChild(td)}
  body.appendChild(tr)})
-}
-function calculate(key){
- const x=data[key],out=document.getElementById(x.outputBody);out.innerHTML="";
- const eligibleByYear=x.patients.map(p=>p*pct(x.prev)*pct(x.test)*pct(x.eligible));
- const starts=eligibleByYear.map((n,i)=>n*Math.min(1,pct(x.inputBody==="pdac-inputs"?"pdac-temp":"nsclc-temp")));
 }
 function compute(key){
  const x=data[key],out=document.getElementById(x.outputBody);out.innerHTML="";
