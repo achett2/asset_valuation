@@ -130,6 +130,7 @@
         </table>
       </div>
       <p class="footnote">The 2026 global sales starting point of $4,120M is an estimate: Alnylam’s low-end 2026 TTR guidance of $4,200M less an assumed $80M of ONPATTRO sales; the reported nine-month TTR geographic mix is used to split U.S. and ex-U.S. sales. 2027 onward is an illustrative forecast, not company guidance: $5,500M peak sales in 2030, then gradual erosion for competitive, access, and pricing pressure. COGS (28%) includes Sanofi royalties; SG&amp;A (22.9%) and all other allocations are approximate. Milestones default to $21.875M in 2026 and 2027. Cash taxes are a simplified positive-profit tax estimate; capex and working capital are modeled as percentages of sales and annual sales change. R&amp;D remains editable by year in the cash flow table. The discount rate remains editable above.</p>
+      <p class="footnote"><strong>LOE horizon:</strong> The forecast now extends through 2036, using $3,690M of global sales as an illustrative 10% decline from 2035—not company guidance. Alnylam's 2025 Form 10-K lists a selected U.S. AMVUTTRA patent expiring July 28, 2036; the filing notes that additional granted or pending patents may exist. FDA orphan-drug exclusivity is indication-specific: June 13, 2029 for hATTR-PN and March 20, 2032 for ATTR-CM. Patent and exclusivity dates do not guarantee generic entry on those dates; this model stops at the 2036 patent date and does not include post-LOE erosion. <a href="https://www.sec.gov/Archives/edgar/data/1178670/000162828026007497/alny-20251231.htm" target="_blank" rel="noopener">Alnylam 2025 Form 10-K</a> · <a href="https://www.accessdata.fda.gov/scripts/opdlisting/oopd/detailedIndex.cfm?cfgridkey=637618" target="_blank" rel="noopener">FDA orphan exclusivity listing</a>.</p>
     </section>
     <p class="footnote">Enter R&amp;D, SG&amp;A, COGS, and Royalties &amp; Milestones as positive amounts. R&amp;D remains at zero under the current asset-level assumption. Cash Taxes are calculated as 21% of positive cash operating profit before capex and working capital (a simplified tax proxy); Capital Spending is 1% of sales; Change in Working Capital is 5% of the change in global sales, with 2026 treated as the initial investment year and negative changes releasing cash. Adjust these rates above the table. COGS is modeled at 28% of global sales and includes Sanofi royalties; SG&amp;A uses 22.9% of global sales. Royalties &amp; Milestones includes a 1% Blackstone royalty and estimated final $21.875M installments in 2026 and 2027. These operating-cost assumptions are proxies, not AMVUTTRA-specific reported expense allocations. NPV discounts 2026 cash flow at year 0 and later years by (1 + discount rate)<sup>year</sup>; Risk-Adjusted NPV applies cumulative PoS.</p>
   </main>
@@ -147,8 +148,8 @@
         { key: "capex", label: "Capital Spending" },
         { key: "workingCapital", label: "Change in Working Capital" }
       ];
-      const salesAssumptions = [4120, 4700, 5100, 5400, 5500, 5400, 5200, 4850, 4500, 4100];
-      const milestoneAssumptions = [21.875, 21.875, 0, 0, 0, 0, 0, 0, 0, 0];
+      const salesAssumptions = [4120, 4700, 5100, 5400, 5500, 5400, 5200, 4850, 4500, 4100, 3690];
+      const milestoneAssumptions = [21.875, 21.875, 0, 0, 0, 0, 0, 0, 0, 0, 0];
       let forecastYears = salesAssumptions.length - 1;
       const values = Object.fromEntries(rowLabels.map(row => [row.key, Array(forecastYears + 1).fill(0)]));
       const posValues = Array(forecastYears + 1).fill(100);
